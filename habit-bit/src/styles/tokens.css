@@ -1,0 +1,24 @@
+:root {
+  /* Spacing — Law of 4 */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Layout */
+  --sidebar-width: 260px;
+  --sidebar-menu-gap: var(--space-2);
+  --page-max-width: 1400px;
+  --page-padding-x: var(--space-6);
+
+  /* Breakpoints */
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+
+  /* Colors — Managed in globals.css via OKLCH, but tokens here for reference if needed */
+  /* These map to the dark mode Bento aesthetic */
+  --color-accent-vibrant: var(--accent);
+}
