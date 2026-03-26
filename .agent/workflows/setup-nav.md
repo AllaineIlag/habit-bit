@@ -112,8 +112,10 @@ Regardless of the strategy, the sidebar MUST map its links to `src/config/naviga
 - If using a Shadcn block, refactor its `navMain` or equivalent array to import and use `NAV_ITEMS`.
 
 ## Phase 6: Scaffolding & Layout
-1. **Layout Wiring**: Update `src/app/layout.tsx` to wrap the children in the appropriate provider (e.g., `SidebarProvider`) and include the `AppSidebar` and `SidebarTrigger`.
-2. **Blank Page Generation**: For each page in `NAV_ITEMS`, create a route file:
+1. **Layout Wiring**: 
+   - 🛑 **MANDATORY**: Create a protected layout in `src/app/(app)/layout.tsx` containing the `SidebarProvider` and `AppSidebar`.
+   - Keep the root `src/app/layout.tsx` minimal (fonts, global providers) for standalone pages like `/auth`.
+2. **Blank Page Generation**: For each page in `NAV_ITEMS` that requires authentication, create the route inside `src/app/(app)/`:
 
 ```tsx
 // src/app/[page-name]/page.tsx

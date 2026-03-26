@@ -1,2 +1,2 @@
-Status: Base components ready ✅
-Next Step: Run `/new-page [name]` or `/add-feature [name]` to start building.
+Status: Auth flow complete ✅. Sample user `user@gmail.com` created.
+Next Step: User verification of login and habit card visibility.

@@ -46,7 +46,8 @@ description: Bootstrap a new Next.js + Supabase project with environment configu
    SUPABASE_SERVICE_ROLE_KEY=
    ```
 2. Create `src/lib/supabase.ts` — server and browser clients using `@supabase/ssr`.
-3. Create `middleware.ts` at the root — handles auth session refresh on every request.
+3. 🛑 **MANDATORY**: Create `src/middleware.ts` at the root — handles auth session refresh and restricts access to protected routes.
+4. 🛑 **MANDATORY**: Use a route group (e.g., `src/app/(app)/`) for all protected dashboard routes to separate them from standalone public pages like `/auth`.
 
 ## Phase 4: Verification
 1. 🛑 **MANDATORY**: Run `npm run build`. Fix any errors before proceeding.

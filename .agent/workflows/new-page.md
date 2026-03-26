@@ -19,7 +19,10 @@ description: Scaffold one new page using PageScaffold tokens. One page per invoc
 1. Read `mission_control/sitrep.md` — confirm navigation shell is in place.
 2. Read `mission_control/scope.md` — confirm `[page-name]` is a P0 or P1 feature.
    - ⚠️ If the page is **P2 or not listed**, flag it to the user before proceeding.
-3. Check if `src/app/[page-name]/page.tsx` already exists. If yes, stop and report — do not overwrite.
+3. **Routing Decision**: Determine if the page is public (e.g., landing, login) or protected (dashboard).
+   - If protected: Create in `src/app/(app)/[page-name]/page.tsx`.
+   - If public: Create in `src/app/[page-name]/page.tsx`.
+4. Check if the target `page.tsx` already exists. If yes, stop and report — do not overwrite.
 
 ## Phase 2: Frontend Shell (Piltover Doctrine)
 > Invoke `piltover.md` with scope locked to this one page.
