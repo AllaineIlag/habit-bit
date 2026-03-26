@@ -1,0 +1,24 @@
+project_name: "habitbit"
+orchestrator: "Assistant" # Professional Personal Assistant
+
+# Global settings
+global_settings:
+  default_model: "gemini-3-pro"
+  language: "en"
+  code_style: "clean_and_documented"
+
+# ─────────────────────────────────────────────────────────────────────
+#                      PROJECT PROTOCOL
+# ─────────────────────────────────────────────────────────────────────
+protocol_references:
+  agreements: "./mission_control/law.md"
+  tasks: "./mission_control/tasks.md"
+  logs: "./mission_control/log.md"
+  sitrep: "./mission_control/sitrep.md"
+
+communication_protocol:
+  sitrep_rule:
+    1. **PRE-ACTION**: Read `sitrep.md` for current context.
+    2. **POST-ACTION**: Update `sitrep.md` with progress and next steps.
+    3. **CLEANUP**: Archive entries once tasks are complete.
+
