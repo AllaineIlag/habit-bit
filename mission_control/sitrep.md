@@ -1,5 +1,2 @@
-# Situation Report
-
-**Status**: Project Initialized ✅
-**Last Action**: `/init-project` completed. Foundation files written.
-**Next Step**: Run `/setup-project` to scaffold Next.js + Supabase.
+Status: Planning complete ✅
+Next Step: Run `/setup-nav` to scaffold the navigation shell.

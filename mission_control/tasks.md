@@ -6,4 +6,6 @@
 - [ ] Build the "Weekly Momentum View" with Framer Motion animations
 
 ## Completed
-(empty)
+- [x] Project Initialization & Laws
+- [x] Infrastructure Setup (Next.js + Supabase)
+- [x] Project Planning & Scope (MVP definition)
