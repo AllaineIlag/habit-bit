@@ -1,2 +1,2 @@
-Status: Planning complete ✅
-Next Step: Run `/setup-nav` to scaffold the navigation shell.
+Status: Navigation shell complete ✅
+Next Step: Run `/setup-components` to install and theme Shadcn base components.

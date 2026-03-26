@@ -9,3 +9,4 @@
 - [x] Project Initialization & Laws
 - [x] Infrastructure Setup (Next.js + Supabase)
 - [x] Project Planning & Scope (MVP definition)
+- [x] Navigation Shell & Page Scaffolding
