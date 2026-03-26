@@ -1,2 +1,2 @@
-Status: Navigation shell complete ✅
-Next Step: Run `/setup-components` to install and theme Shadcn base components.
+Status: Base components ready ✅
+Next Step: Run `/new-page [name]` or `/add-feature [name]` to start building.
