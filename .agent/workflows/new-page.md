@@ -64,9 +64,10 @@ export async function get[PageName]Data() {
 ## Phase 4: Verification
 1. 🛑 **MANDATORY**: Run `npm run build`. The new page must compile with zero errors.
 2. Confirm the page is reachable via the sidebar.
-3. Update `mission_control/sitrep.md`:
+3. Update `mission_control/sitrep.md`.
 
-```
-Status: Page /[page-name] scaffolded ✅
-Next Step: Run `/add-feature [page-name]` to implement content and logic.
-```
+## Phase 5: Documentation
+> Invoke `finalize-docs.md` scoped to this page shell.
+
+1. Update `mission_control/sitrep.md` with the page scaffolded status.
+2. Confirm the route is documented in the navigation manifest.

@@ -59,9 +59,9 @@ export async function [featureAction](data: FeatureInput) {
 3. **RLS test**: Confirm users can only see their own data.
 4. 🛑 **MANDATORY**: Run `npm run build`. Zero errors before returning to user.
 5. Update `mission_control/tasks.md` — mark feature as complete.
-6. Update `mission_control/sitrep.md`:
+## Phase 5: Documentation
+> Invoke `finalize-docs.md` scoped to this feature.
 
-```
-Status: Feature [feature-name] complete ✅
-Next Step: Run `/add-feature [next-feature]` or `/handoff` when all P0 features are done.
-```
+1. Update `mission_control/sitrep.md` with the feature completion status.
+2. Update `mission_control/scope.md` status.
+3. Document any new patterns or technical decisions in the codebase.
