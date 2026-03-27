@@ -1,13 +1,15 @@
 import React from "react"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import { cn } from "@/lib/utils"
 
 interface PageScaffoldProps {
   title: string
   children: React.ReactNode
   actions?: React.ReactNode
+  mainClassName?: string
 }
 
-export function PageScaffold({ title, children, actions }: PageScaffoldProps) {
+export function PageScaffold({ title, children, actions, mainClassName }: PageScaffoldProps) {
   return (
     <div className="flex flex-col flex-1 min-h-0">
       <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -22,7 +24,7 @@ export function PageScaffold({ title, children, actions }: PageScaffoldProps) {
         )}
       </header>
       <main 
-        className="flex-1 overflow-auto p-4 md:p-6"
+        className={cn("flex-1 overflow-auto p-4 md:p-6", mainClassName)}
         style={{
           maxWidth: "var(--page-max-width)",
           width: "100%",

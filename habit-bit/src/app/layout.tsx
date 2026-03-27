@@ -10,7 +10,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Habit-bit",
-  description: "Track your daily rituals and focus blocks.",
+  description: "Track your Habits and focus blocks.",
 };
 
 export default function RootLayout({
