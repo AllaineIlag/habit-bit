@@ -54,7 +54,13 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // Protect all routes except the root (landing page) and static assets
+  const isLandingPage = request.nextUrl.pathname === "/"
+  if (!user && !isLandingPage) {
+    return NextResponse.redirect(new URL("/", request.url))
+  }
 
   return response
 }

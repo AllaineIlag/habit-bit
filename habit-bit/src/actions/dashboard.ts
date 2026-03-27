@@ -11,7 +11,13 @@ export async function getDashboardSummary() {
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {
-    throw new Error('Not authenticated')
+    return {
+      totalRituals: 0,
+      completedToday: 0,
+      streakCount: 0,
+      completionRate: 0,
+      habits: []
+    }
   }
 
   // Get all rituals for the user

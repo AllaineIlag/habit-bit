@@ -94,6 +94,87 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          full_name: string | null
+          id: string
+          is_authorized: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id?: string
+          is_authorized?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id?: string
+          is_authorized?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      quotes: {
+        Row: {
+          author: string | null
+          category: string | null
+          created_at: string | null
+          id: string
+          text: string
+        }
+        Insert: {
+          author?: string | null
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          text: string
+        }
+        Update: {
+          author?: string | null
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          text?: string
+        }
+        Relationships: []
+      }
+      rules: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -1,15 +1,27 @@
 import { PageScaffold } from "@/components/layout/page-scaffold"
+import { HabitChecklist } from "@/components/dashboard/habit-checklist"
+import { RulesTable } from "@/components/dashboard/rules-table"
+import { getDashboardSummary } from "@/actions/dashboard"
+import { getRules } from "@/actions/rules"
 
 export default async function DashboardPage() {
+  const { habits } = await getDashboardSummary()
+  const rules = await getRules()
+
   return (
     <PageScaffold title="Overview">
-      <div className="flex flex-col items-center justify-center h-[60vh] space-y-4">
-        <div className="h-20 w-20 rounded-full bg-zinc-900/40 border border-dashed border-white/10 flex items-center justify-center animate-pulse">
-          <div className="h-3 w-3 bg-blue-500 rounded-full blur-[2px]" />
+      <div className="flex flex-col md:flex-row gap-6 items-stretch">
+        {/* Left: Daily Rituals (1/4) */}
+        <div className="w-full md:w-1/4 min-w-[320px] flex flex-col min-h-[500px]">
+          <HabitChecklist habits={habits} />
         </div>
-        <div className="text-center space-y-1">
-          <h2 className="text-xl font-bold tracking-tight text-white">Your Visual Journey</h2>
-          <p className="text-sm text-zinc-500 font-medium">Preparing the next evolution of your ritual experience...</p>
+        
+        {/* Middle: Content Area (1/2) */}
+        <div className="hidden md:block md:w-1/2" />
+        
+        {/* Right: Rules (1/4) */}
+        <div className="w-full md:w-1/4 min-w-[320px]">
+          <RulesTable rules={rules} />
         </div>
       </div>
     </PageScaffold>

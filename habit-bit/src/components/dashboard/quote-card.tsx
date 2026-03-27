@@ -33,7 +33,7 @@ export function QuoteCard() {
   }, [])
 
   return (
-    <Card className="col-span-full border-none bg-zinc-900/50 backdrop-blur-xl relative overflow-hidden flex items-center p-6 group min-h-[140px]">
+    <Card className="col-span-full border-none bg-[var(--bento-card-bg)] backdrop-blur-xl relative overflow-hidden flex items-center p-6 group min-h-[140px]">
       <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
         <Quote className="h-24 w-24 rotate-12" />
       </div>
@@ -52,12 +52,12 @@ export function QuoteCard() {
               <p className="text-lg font-medium leading-tight text-white/90 italic tracking-tight">
                 "{quote.text}"
               </p>
-              <p className="text-xs text-muted-foreground font-mono uppercase tracking-widest">— {quote.author || 'Unknown'}</p>
+              <p className="text-[var(--text-tiny)] text-muted-foreground font-mono uppercase tracking-widest">— {quote.author || 'Unknown'}</p>
             </motion.div>
           ) : (
             <div className="space-y-2">
-              <div className="h-5 w-3/4 bg-zinc-800 animate-pulse rounded" />
-              <div className="h-3 w-1/4 bg-zinc-800 animate-pulse rounded" />
+              <div className="h-5 w-3/4 bg-[var(--bento-item-bg)] animate-pulse rounded" />
+              <div className="h-3 w-1/4 bg-[var(--bento-item-bg)] animate-pulse rounded" />
             </div>
           )}
         </AnimatePresence>
@@ -69,7 +69,7 @@ export function QuoteCard() {
           size="icon"
           disabled={isPending}
           onClick={fetchQuote}
-          className="h-8 w-8 rounded-full bg-white/5 hover:bg-white/10 text-muted-foreground hover:text-white transition-all border border-white/5"
+          className="h-8 w-8 rounded-full bg-[var(--bento-item-bg)] hover:bg-[var(--bento-item-hover)] text-muted-foreground hover:text-white transition-all border border-[var(--bento-border-glass)]"
         >
           <RotateCcw className={`h-4 w-4 ${isPending ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
         </Button>
