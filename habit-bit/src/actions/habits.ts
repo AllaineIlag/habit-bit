@@ -3,11 +3,15 @@
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { Database } from '@/types/supabase';
 import { revalidatePath } from 'next/cache';
+import { format } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
+import { SYSTEM_TIMEZONE } from '@/config/timeline';
 
 export type Habit = Database['public']['Tables']['habits']['Row'];
 export type HabitInsert = Database['public']['Tables']['habits']['Insert'];
 export type HabitUpdate = Database['public']['Tables']['habits']['Update'];
 export type HabitLog = Database['public']['Tables']['habit_logs']['Row'];
+export type Routine = Database['public']['Tables']['routines']['Row'];
 
 /**
  * Fetch all habits for the authenticated user.
@@ -100,7 +104,9 @@ export async function deleteHabit(id: string) {
 /**
  * Toggle habit completion log for a specific date (defaults to today).
  */
-export async function toggleHabitLog(habitId: string, date: string = new Date().toISOString().split('T')[0]) {
+export async function toggleHabitLog(habitId: string, date?: string) {
+  // If no date is provided, use the current date in the system's timezone
+  const logDate = date || format(toZonedTime(new Date(), SYSTEM_TIMEZONE), 'yyyy-MM-dd');
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -111,7 +117,7 @@ export async function toggleHabitLog(habitId: string, date: string = new Date().
     .from('habit_logs')
     .select('*')
     .eq('habit_id', habitId)
-    .eq('completed_at', date)
+    .eq('completed_at', logDate)
     .single();
 
   if (existingLog) {
@@ -129,7 +135,7 @@ export async function toggleHabitLog(habitId: string, date: string = new Date().
       .insert({
         habit_id: habitId,
         user_id: user.id,
-        completed_at: date,
+        completed_at: logDate,
         status: 'done'
       });
     
@@ -160,4 +166,18 @@ export async function getRecentLogs(days: number = 7) {
 
   if (error) throw error;
   return data as HabitLog[];
+}
+
+/**
+ * Fetch all available routines.
+ */
+export async function getRoutines() {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from('routines')
+    .select('*')
+    .order('order_index', { ascending: true });
+
+  if (error) throw error;
+  return data as Routine[];
 }

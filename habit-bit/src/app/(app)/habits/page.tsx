@@ -4,6 +4,7 @@ import { HabitCard } from "@/components/habits/habit-card"
 import { CreateHabitDialog } from "@/components/habits/create-habit-dialog"
 import { createServerSupabaseClient } from "@/lib/supabase"
 import { redirect } from "next/navigation"
+import { getZonedToday } from "@/lib/date-utils"
 
 export default async function HabitsPage() {
   const supabase = await createServerSupabaseClient()
@@ -14,8 +15,8 @@ export default async function HabitsPage() {
   }
 
   const habits = await getHabits()
-  const today = new Date().toISOString().split('T')[0]
-  const recentLogs = await getRecentLogs(1) // Just check today
+  const today = getZonedToday()
+  const recentLogs = await getRecentLogs(140) // 140 days (7 rows x 20 columns) for the dense activity grid
   
   const completedHabitIds = new Set(
     recentLogs
@@ -41,12 +42,13 @@ export default async function HabitsPage() {
             <p className="text-xs text-muted-foreground">Click "New Habit" to start your journey.</p>
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {habits.map((habit) => (
               <HabitCard 
                 key={habit.id} 
                 habit={habit} 
                 isCompletedToday={completedHabitIds.has(habit.id)}
+                activityLogs={recentLogs.filter(l => l.habit_id === habit.id)}
               />
             ))}
           </div>

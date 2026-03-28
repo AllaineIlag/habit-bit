@@ -43,7 +43,7 @@ export function HabitChecklist({ habits: initialHabits }: HabitChecklistProps) {
   }
 
   return (
-    <Card className="border-none bg-[var(--bento-card-bg)] backdrop-blur-xl relative overflow-hidden group h-full flex flex-col gap-0">
+    <Card className="border-none rounded-[var(--radius-lg)] bg-[var(--bento-card-bg)] backdrop-blur-xl relative overflow-hidden group h-full flex flex-col gap-0">
       <div className="absolute inset-0 bg-gradient-to-br from-[var(--bento-accent)]/5 via-transparent to-transparent opacity-50" />
 
       <CardHeader className="flex flex-row items-center justify-between pb-4 relative z-10 shrink-0">
@@ -84,7 +84,7 @@ export function HabitChecklist({ habits: initialHabits }: HabitChecklistProps) {
                       layout: { duration: 0.4, ease: [0.23, 1, 0.32, 1] }
                     }}
                     className={cn(
-                      "flex items-center gap-3 p-3 rounded-2xl transition-colors duration-300 border border-[var(--bento-border-glass)] group/item",
+                      "flex items-center gap-3 p-3 rounded-[var(--radius-lg)] transition-colors duration-300 border border-[var(--bento-border-glass)] group/item",
                       habit.isCompletedToday
                         ? "bg-[var(--bento-item-bg)] border-[var(--bento-highlight)]"
                         : "bg-[var(--bento-item-bg)] hover:bg-[var(--bento-item-hover)] hover:border-[var(--bento-highlight)]"

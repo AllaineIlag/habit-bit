@@ -5,7 +5,7 @@ import { FireStreak } from "@/components/lab/fire-streak"
 import { RitualCardPremium } from "@/components/lab/ritual-card-premium"
 import { RitualSummary } from "@/components/dashboard/ritual-summary"
 import { LivingBridge } from "@/components/dashboard/living-bridge"
-import { QuoteCard } from "@/components/dashboard/quote-card"
+import { QuoteCard } from "@/components/dashboard/daily-motivation"
 import { MomentumScore } from "@/components/dashboard/momentum-score"
 import { LayoutGrid } from "lucide-react"
 
@@ -55,8 +55,8 @@ export default function LabsPage() {
             <p className="text-sm text-zinc-500">Atomic components used for daily engagement tracking.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-             <FireStreak isActive={true} count={42} />
-             <QuoteCard />
+            <FireStreak isActive={true} count={42} />
+            <QuoteCard />
           </div>
         </section>
 
@@ -67,7 +67,7 @@ export default function LabsPage() {
             <p className="text-sm text-zinc-500">The primary vehicle for daily habit tracking.</p>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <RitualCardPremium 
+            <RitualCardPremium
               name="Deep Work"
               streak={45}
               current={3}
@@ -75,7 +75,7 @@ export default function LabsPage() {
               weeklyCompletions={[true, true, false, true, true, false, false]}
               isActive={true}
             />
-            <RitualCardPremium 
+            <RitualCardPremium
               name="Daily Exercise"
               streak={12}
               current={0}
@@ -93,18 +93,18 @@ export default function LabsPage() {
           </div>
           <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-6">Gallery Audit Doctrine</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-[11px] text-zinc-500 font-medium">
-             <div className="space-y-2">
-                <span className="text-white block">Visual Consistency</span>
-                <p>All items must follow the `radius-4xl` and `spacing-8` mandate. Backgrounds must use `bg-zinc-900/40` with `backdrop-blur-xl`.</p>
-             </div>
-             <div className="space-y-2">
-                <span className="text-white block">Active States</span>
-                <p>Interactive elements should feature the `orange-500` glow when "ignited" (isActive=true).</p>
-             </div>
-             <div className="space-y-2">
-                <span className="text-white block">Performance</span>
-                <p>Animations are powered by Framer Motion with `layout` transitions and `AnimatePresence` for state swaps.</p>
-             </div>
+            <div className="space-y-2">
+              <span className="text-white block">Visual Consistency</span>
+              <p>All items must follow the `radius-4xl` and `spacing-8` mandate. Backgrounds must use `bg-zinc-900/40` with `backdrop-blur-xl`.</p>
+            </div>
+            <div className="space-y-2">
+              <span className="text-white block">Active States</span>
+              <p>Interactive elements should feature the `orange-500` glow when "ignited" (isActive=true).</p>
+            </div>
+            <div className="space-y-2">
+              <span className="text-white block">Performance</span>
+              <p>Animations are powered by Framer Motion with `layout` transitions and `AnimatePresence` for state swaps.</p>
+            </div>
           </div>
         </div>
       </div>

@@ -52,47 +52,46 @@ export type Database = {
       habits: {
         Row: {
           category: string | null
-          color_hex: string | null
           created_at: string
-          description: string | null
           frequency: Json | null
-          goal: number | null
-          icon_name: string | null
           id: string
           is_archived: boolean
           name: string
+          routine_id: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           category?: string | null
-          color_hex?: string | null
           created_at?: string
-          description?: string | null
           frequency?: Json | null
-          goal?: number | null
-          icon_name?: string | null
           id?: string
           is_archived?: boolean
           name: string
+          routine_id?: string | null
           updated_at?: string
           user_id?: string
         }
         Update: {
           category?: string | null
-          color_hex?: string | null
           created_at?: string
-          description?: string | null
           frequency?: Json | null
-          goal?: number | null
-          icon_name?: string | null
           id?: string
           is_archived?: boolean
           name?: string
+          routine_id?: string | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "habits_routine_id_fkey"
+            columns: ["routine_id"]
+            isOneToOne: false
+            referencedRelation: "routines"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -124,54 +123,45 @@ export type Database = {
       quotes: {
         Row: {
           author: string | null
-          category: string | null
           created_at: string | null
           id: string
           text: string
         }
         Insert: {
           author?: string | null
-          category?: string | null
           created_at?: string | null
           id?: string
           text: string
         }
         Update: {
           author?: string | null
-          category?: string | null
           created_at?: string | null
           id?: string
           text?: string
         }
         Relationships: []
       }
-      rules: {
+      routines: {
         Row: {
-          category: string | null
           created_at: string | null
-          description: string | null
           id: string
-          is_active: boolean | null
-          title: string
-          user_id: string
+          name: string
+          order_index: number | null
+          slug: string
         }
         Insert: {
-          category?: string | null
           created_at?: string | null
-          description?: string | null
           id?: string
-          is_active?: boolean | null
-          title: string
-          user_id: string
+          name: string
+          order_index?: number | null
+          slug: string
         }
         Update: {
-          category?: string | null
           created_at?: string | null
-          description?: string | null
           id?: string
-          is_active?: boolean | null
-          title?: string
-          user_id?: string
+          name?: string
+          order_index?: number | null
+          slug?: string
         }
         Relationships: []
       }

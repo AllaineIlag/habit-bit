@@ -3,8 +3,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { startOfDay, endOfDay, subDays, format, isSameDay, startOfWeek, addDays } from 'date-fns'
 import { toZonedTime } from 'date-fns-tz'
-
-const USER_TIMEZONE = 'Asia/Shanghai' // UTC+8
+import { SYSTEM_TIMEZONE } from '@/config/timeline'
 
 export async function getDashboardSummary() {
   const supabase = await createServerSupabaseClient()
@@ -38,14 +37,14 @@ export async function getDashboardSummary() {
   if (logsError) throw logsError
 
   const now = new Date()
-  const todayZoned = toZonedTime(now, USER_TIMEZONE)
+  const todayZoned = toZonedTime(now, SYSTEM_TIMEZONE)
   const monday = startOfWeek(todayZoned, { weekStartsOn: 1 })
 
   // Process each habit
   const processedHabits = (habits || []).map(habit => {
     const habitLogs = (allLogs || []).filter(log => log.habit_id === habit.id)
     const logDates = new Set(habitLogs.map(log => 
-      format(toZonedTime(new Date(log.completed_at), USER_TIMEZONE), 'yyyy-MM-dd')
+      format(toZonedTime(new Date(log.completed_at), SYSTEM_TIMEZONE), 'yyyy-MM-dd')
     ))
 
     // Calculate Streak
@@ -84,7 +83,7 @@ export async function getDashboardSummary() {
   // Overall Dashboard Streak (Consecutive days with ANY completion)
   let dashboardStreak = 0
   const overallLogDates = new Set((allLogs || []).map(log => 
-    format(toZonedTime(new Date(log.completed_at), USER_TIMEZONE), 'yyyy-MM-dd')
+    format(toZonedTime(new Date(log.completed_at), SYSTEM_TIMEZONE), 'yyyy-MM-dd')
   ))
 
   let dsCheckDate = todayZoned
