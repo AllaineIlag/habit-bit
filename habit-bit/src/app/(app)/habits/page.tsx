@@ -1,7 +1,7 @@
 import { PageScaffold } from "@/components/layout/page-scaffold"
 import { getHabits, getRecentLogs } from "@/actions/habits"
 import { HabitCard } from "@/components/habits/habit-card"
-import { CreateHabitDialog } from "@/components/habits/create-habit-dialog"
+import { HabitDialog } from "@/components/habits/habit-dialog"
 import { createServerSupabaseClient } from "@/lib/supabase"
 import { redirect } from "next/navigation"
 import { getZonedToday } from "@/lib/date-utils"
@@ -27,7 +27,7 @@ export default async function HabitsPage() {
   return (
     <PageScaffold 
       title="Habits"
-      actions={<CreateHabitDialog />}
+      actions={<HabitDialog />}
     >
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-1">

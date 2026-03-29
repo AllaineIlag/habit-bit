@@ -22,9 +22,10 @@ import {
   SelectValue 
 } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { createHabit, getRoutines, type Routine } from "@/actions/habits"
+import { createHabit, updateHabit, getRoutines, type Routine, type Habit } from "@/actions/habits"
 import { useState, useTransition, useEffect } from "react"
 import { PlusIcon, Loader2Icon } from "lucide-react"
+import { toast } from "sonner"
 
 const DAYS_OF_WEEK = [
   { label: "Sun", value: 0 },
@@ -41,10 +42,23 @@ const MONTHS = [
   "July", "August", "September", "October", "November", "December"
 ]
 
-export function CreateHabitDialog() {
-  const [open, setOpen] = useState(false)
+interface HabitDialogProps {
+  habit?: Habit
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  trigger?: React.ReactNode
+}
+
+export function HabitDialog({ habit, open: controlledOpen, onOpenChange, trigger }: HabitDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isControlled = controlledOpen !== undefined
+  const open = isControlled ? controlledOpen : internalOpen
+  const setOpen = isControlled ? onOpenChange! : setInternalOpen
+
   const [isPending, startTransition] = useTransition()
   const [name, setName] = useState("")
+  const [category, setCategory] = useState("General")
+  const [isCustomCategory, setIsCustomCategory] = useState(false)
   
   // Frequency State
   const [frequencyType, setFrequencyType] = useState<"daily" | "weekly" | "monthly" | "yearly">("daily")
@@ -56,6 +70,39 @@ export function CreateHabitDialog() {
   // Routine State
   const [routines, setRoutines] = useState<Routine[]>([])
   const [routineId, setRoutineId] = useState<string | null>(null)
+
+  const PREDEFINED_CATEGORIES = [
+    "General", "Health", "Growth", "Productivity", "Mindset", 
+    "Progress", "Morning Ritual", "Evening Ritual", "Discipline", "Housekeeping"
+  ]
+
+  // Initialize state from habit
+  useEffect(() => {
+    if (habit) {
+      setName(habit.name)
+      setCategory(habit.category || "General")
+      setIsCustomCategory(!PREDEFINED_CATEGORIES.includes(habit.category || "General"))
+      setRoutineId(habit.routine_id)
+      const freq = habit.frequency as any
+      if (freq?.type) {
+        setFrequencyType(freq.type)
+        if (freq.type === "weekly") setWeeklyDays(freq.days || [])
+        if (freq.type === "monthly") setMonthlyDay(freq.day || 1)
+        if (freq.type === "yearly") {
+          setYearlyMonth(freq.month || 0)
+          setYearlyDay(freq.day || 1)
+        }
+      }
+    } else {
+      // Reset for new habit
+      setName("")
+      setCategory("General")
+      setIsCustomCategory(false)
+      setRoutineId(null)
+      setFrequencyType("daily")
+      setWeeklyDays([1, 2, 3, 4, 5])
+    }
+  }, [habit, open])
 
   useEffect(() => {
     const fetchRoutines = async () => {
@@ -84,18 +131,35 @@ export function CreateHabitDialog() {
           frequency.day = yearlyDay
         }
 
-        await createHabit({
-          name,
-          category: "General",
-          frequency,
-          routine_id: routineId
-        })
+        if (habit) {
+          await updateHabit(habit.id, {
+            name,
+            category,
+            frequency,
+            routine_id: routineId
+          })
+          toast.success("Habit updated successfully")
+        } else {
+          await createHabit({
+            name,
+            category,
+            frequency,
+            routine_id: routineId
+          })
+          toast.success("Habit created successfully")
+        }
+        
         setOpen(false)
-        setName("")
-        setFrequencyType("daily")
-        setRoutineId(null)
+        if (!habit) {
+          setName("")
+          setCategory("General")
+          setIsCustomCategory(false)
+          setFrequencyType("daily")
+          setRoutineId(null)
+        }
       } catch (error) {
-        console.error("Failed to create habit:", error)
+        console.error("Failed to save habit:", error)
+        toast.error(habit ? "Failed to update habit" : "Failed to create habit")
       }
     })
   }
@@ -108,16 +172,20 @@ export function CreateHabitDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className={cn(buttonVariants({ variant: "default" }), "gap-2 ")}>
-        <PlusIcon className="h-4 w-4" />
-        <span>New Habit</span>
-      </DialogTrigger>
+      {trigger ? (
+        <DialogTrigger>{trigger}</DialogTrigger>
+      ) : !isControlled ? (
+        <DialogTrigger className={cn(buttonVariants({ variant: "default" }), "gap-2 ")}>
+          <PlusIcon className="h-4 w-4" />
+          <span>New Habit</span>
+        </DialogTrigger>
+      ) : null}
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Create New Habit</DialogTitle>
+            <DialogTitle>{habit ? "Edit Habit" : "Create New Habit"}</DialogTitle>
             <DialogDescription>
-              Start building a better version of yourself today.
+              {habit ? "Make changes to your habit settings below." : "Start building a better version of yourself today."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6 py-4">
@@ -132,6 +200,64 @@ export function CreateHabitDialog() {
               />
             </div>
 
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label>Category</Label>
+                <Select 
+                  value={isCustomCategory ? "custom" : category} 
+                  onValueChange={(v: string | null) => {
+                    if (v === "custom") {
+                      setIsCustomCategory(true)
+                      setCategory("")
+                    } else {
+                      setIsCustomCategory(false)
+                      setCategory(v || "General")
+                    }
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PREDEFINED_CATEGORIES.map(cat => (
+                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    ))}
+                    <SelectItem value="custom">Custom...</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid gap-2">
+                <Label>Routine (Time of Day)</Label>
+                <Select value={routineId || "none"} onValueChange={(v) => setRoutineId(v === "none" ? null : v)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select routine" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None / Flexible</SelectItem>
+                    {routines.map((r) => (
+                      <SelectItem key={r.id} value={r.id}>
+                        {r.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {isCustomCategory && (
+              <div className="grid gap-2">
+                <Label htmlFor="custom-category">Custom Category Name</Label>
+                <Input
+                  id="custom-category"
+                  placeholder="e.g., Creative, Focus, etc."
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  required
+                />
+              </div>
+            )}
+
             <div className="grid gap-2">
               <Label>Frequency</Label>
               <Select value={frequencyType} onValueChange={(v) => v && setFrequencyType(v as any)}>
@@ -143,23 +269,6 @@ export function CreateHabitDialog() {
                   <SelectItem value="weekly">Weekly</SelectItem>
                   <SelectItem value="monthly">Monthly</SelectItem>
                   <SelectItem value="yearly">Yearly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid gap-2">
-              <Label>Routine (Time of Day)</Label>
-              <Select value={routineId || "none"} onValueChange={(v) => setRoutineId(v === "none" ? null : v)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a routine (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">None / Flexible</SelectItem>
-                  {routines.map((r) => (
-                    <SelectItem key={r.id} value={r.id}>
-                      {r.name}
-                    </SelectItem>
-                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -229,7 +338,7 @@ export function CreateHabitDialog() {
           <DialogFooter>
             <Button type="submit" disabled={isPending || !name}>
               {isPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
-              Create Habit
+              {habit ? "Update Habit" : "Create Habit"}
             </Button>
           </DialogFooter>
         </form>

@@ -1,6 +1,6 @@
 import { PageScaffold } from "@/components/layout/page-scaffold"
 import { HabitChecklist } from "@/components/dashboard/habit-checklist"
-import { CreateHabitDialog } from "@/components/habits/create-habit-dialog"
+import { HabitDialog } from "@/components/habits/habit-dialog"
 import { getDashboardSummary } from "@/actions/dashboard"
 import { StreakCard } from "@/components/dashboard/streak-card"
 import { QuoteCard } from "@/components/dashboard/daily-motivation"
@@ -25,7 +25,7 @@ export default async function DashboardPage() {
     <PageScaffold
       title="Overview"
       mainClassName="flex flex-col"
-      actions={<CreateHabitDialog />}
+      actions={<HabitDialog />}
     >
       <div className="flex flex-col md:flex-row gap-6 items-start flex-1">
 

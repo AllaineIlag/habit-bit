@@ -23,7 +23,7 @@ export interface NavItem {
   }[]
 }
 
-export const NAV_MAIN: NavItem[] = [
+export const NAV_PLATFORM: NavItem[] = [
   {
     title: "Overview",
     url: "/dashboard",
@@ -62,7 +62,7 @@ export const NAV_MAIN: NavItem[] = [
   },
 ]
 
-export const NAV_SECONDARY: NavItem[] = [
+export const NAV_SYSTEM: NavItem[] = [
   {
     title: "Labs",
     url: "/labs",
@@ -72,6 +72,14 @@ export const NAV_SECONDARY: NavItem[] = [
     title: "Settings",
     url: "/settings",
     icon: Settings,
+  },
+]
+
+export const NAV_MANAGEMENT: NavItem[] = [
+  {
+    title: "Habit",
+    url: "/habit",
+    icon: Sparkles,
   },
 ]
 

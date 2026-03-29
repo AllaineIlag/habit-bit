@@ -50,6 +50,7 @@ export async function createHabit(habit: Omit<HabitInsert, 'user_id'>) {
   if (error) throw error;
   
   revalidatePath('/habits');
+  revalidatePath('/habit');
   revalidatePath('/dashboard');
   
   return data as Habit;
@@ -75,6 +76,7 @@ export async function updateHabit(id: string, updates: HabitUpdate) {
   if (error) throw error;
   
   revalidatePath('/habits');
+  revalidatePath('/habit');
   revalidatePath('/dashboard');
   
   return data as Habit;
@@ -98,6 +100,77 @@ export async function deleteHabit(id: string) {
   if (error) throw error;
   
   revalidatePath('/habits');
+  revalidatePath('/habit');
+  revalidatePath('/dashboard');
+}
+
+/**
+ * Archive or Restore a habit.
+ */
+export async function archiveHabit(id: string, isArchived: boolean = true) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Unauthorized");
+
+  const { data, error } = await supabase
+    .from('habits')
+    .update({ is_archived: isArchived })
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  
+  revalidatePath('/habits');
+  revalidatePath('/habit');
+  revalidatePath('/dashboard');
+  
+  return data as Habit;
+}
+
+/**
+ * Archive or Restore multiple habits.
+ */
+export async function archiveHabits(ids: string[], isArchived: boolean = true) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Unauthorized");
+
+  const { error } = await supabase
+    .from('habits')
+    .update({ is_archived: isArchived })
+    .in('id', ids)
+    .eq('user_id', user.id);
+
+  if (error) throw error;
+  
+  revalidatePath('/habits');
+  revalidatePath('/habit');
+  revalidatePath('/dashboard');
+}
+
+/**
+ * Delete multiple habits.
+ */
+export async function deleteHabits(ids: string[]) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Unauthorized");
+
+  const { error } = await supabase
+    .from('habits')
+    .delete()
+    .in('id', ids)
+    .eq('user_id', user.id);
+
+  if (error) throw error;
+  
+  revalidatePath('/habits');
+  revalidatePath('/habit');
   revalidatePath('/dashboard');
 }
 
@@ -143,6 +216,7 @@ export async function toggleHabitLog(habitId: string, date?: string) {
   }
 
   revalidatePath('/habits');
+  revalidatePath('/habit');
   revalidatePath('/dashboard');
 }
 

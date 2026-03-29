@@ -21,6 +21,7 @@ import { ChevronRightIcon } from "lucide-react"
 
 export function NavMain({
   items,
+  label = "Platform",
 }: {
   items: {
     title: string
@@ -32,12 +33,13 @@ export function NavMain({
       url: string
     }[]
   }[]
+  label?: string
 }) {
   const pathname = usePathname()
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>{label}</SidebarGroupLabel>
       <SidebarMenu className="gap-[var(--sidebar-menu-gap)]">
         {items.map((item) => {
           const hasItems = item.items && item.items.length > 0
