@@ -1,0 +1,33 @@
+
+HABITS 
+- 3:30 Wakeup
+- No Snooze
+- Cold Shower
+- Read Journal
+- Read book AM
+- No-phone walk
+- No breakfast until 10 AM
+- Morning Briefing
+- Deep work 4 hours
+- Evening Plan
+- Journal
+- Read Book PM
+- 2 Litters of Water
+- List weight after waking up
+- List weight before sleeping
+- Fasting 
+- wash clothes twice a week (tuesday, friday)
+- wash motorcycle every 13th day of the month
+- 10-3-2-1-0 Sleep Rule (before sleeping)
+	- no caffeine 10 hours 
+	- no food 3 hours 
+	- no stimulating activity 2 hours  
+	- no screens 1 hour 
+	- zero snoozing in the morning 
+- No sugar
+- No coffee
+- No Game Day
+- No watching entertainment
+- No scrolling
+- No fapping
+- No phone on cr
