@@ -11,7 +11,7 @@ export async function signIn(formData: FormData) {
   const password = formData.get('password') as string
   
   if (!email || !password) {
-    throw new Error('Email and password are required')
+    return { error: 'Email and password are required' }
   }
 
   const supabase = await createServerSupabaseClient()
@@ -22,14 +22,14 @@ export async function signIn(formData: FormData) {
   })
 
   if (signInError) {
-    throw signInError
+    return { error: signInError.message }
   }
 
   // Check if the user is authorized in the profiles table
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) {
-    throw new Error('Authentication failed: User not found')
+    return { error: 'Authentication failed: User not found' }
   }
 
   const { data: profile, error: profileError } = await supabase
@@ -41,7 +41,7 @@ export async function signIn(formData: FormData) {
   if (profileError || !profile) {
     // If not in profiles table, they are not allowed in the system
     await supabase.auth.signOut()
-    throw new Error('Access Denied: Your account is not authorized to use this system.')
+    return { error: 'Access Denied: Your account is not authorized to use this system.' }
   }
 
   redirect('/dashboard')

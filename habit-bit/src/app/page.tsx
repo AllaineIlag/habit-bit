@@ -22,7 +22,7 @@ export default async function IndexPage() {
       </p>
       <div className="flex gap-4">
         <Link 
-          href="/login" 
+          href="/auth" 
           className={cn(buttonVariants({ size: "lg" }), "bg-white text-black hover:bg-zinc-200 h-10 px-6")}
         >
           Get Started
