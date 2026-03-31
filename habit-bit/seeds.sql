@@ -1,9 +1,12 @@
--- Habit-bit Sample Seed Data
+-- Habit-bit Specific Seed Data from User Screenshots
 -- Run this AFTER creating a user in Supabase Auth.
 
 DO $$
 DECLARE
     target_user_id uuid;
+    am_id uuid := '8b57c0d5-76f4-48b9-8cda-cb98bf411823';
+    pm_id uuid := '7f7e57f5-3d55-426c-815d-b28164ca8ae6';
+    eve_id uuid := '6441e2b4-684c-4ab9-a425-eac072b6deec';
 BEGIN
     -- Get the first available user
     SELECT id INTO target_user_id FROM auth.users LIMIT 1;
@@ -24,28 +27,44 @@ BEGIN
             'authenticated',
             '$2a$10$abcdefghijklmnopqrstuvwxyz123' -- Placeholder
         );
-        RAISE NOTICE 'No user found. Created a dev user (dev@habitbit.com) with ID %', target_user_id;
     END IF;
 
-    -- Clear existing (optional, for clean seed)
+    -- Clear existing habits for identifying this user
     DELETE FROM public.habit_logs WHERE user_id = target_user_id;
     DELETE FROM public.habits WHERE user_id = target_user_id;
 
-        -- Morning Rituals
-        INSERT INTO public.habits (user_id, name, description, category, icon_name, color_hex)
-        VALUES 
-        (target_user_id, 'Morning Ritual', 'Make Bed + Cook for Breakfast + Wash the Dishes', 'Household', 'Home', '#10b981'),
-        (target_user_id, 'Morning Briefing', 'Checking the plans last night and what to do today', 'Mindset', 'ClipboardList', '#6366f1'),
-        (target_user_id, 'Morning Exercise', 'Active movement session', 'Energy', 'Dumbbell', '#ef4444'),
-        (target_user_id, 'Deep Work (AM)', 'Uninterrupted cognitive focus block', 'Focus', 'Cpu', '#f59e0b'),
-        (target_user_id, 'Lunch', 'Nutritional recharge', 'Health', 'Utensils', '#10b981'),
-        (target_user_id, 'Afternoon Reset', 'Mid-day House Chores', 'Household', 'Wind', '#6366f1'),
-        (target_user_id, 'Deep Work (PM)', 'Second focus block', 'Focus', 'Cpu', '#f59e0b'),
-        (target_user_id, 'Evening Recovery', 'Exercise + Bath', 'Health', 'Bath', '#8b5cf6'),
-        (target_user_id, 'Dinner Prep', 'Cook for Dinner', 'Household', 'Flame', '#ef4444'),
-        (target_user_id, 'Reflection & Planning', 'Plan tomorrow + Journal current day', 'Mindset', 'BookOpen', '#6366f1'),
-        (target_user_id, 'Night Reading', 'Wind down with a book', 'Growth', 'Library', '#8b5cf6');
+    -- AM ROUTINE (13 habits)
+    INSERT INTO public.habits (user_id, routine_id, order_index, name, category, frequency) VALUES
+    (target_user_id, am_id, 0, '3:30 Wakeup', 'Energy', '{"type": "daily"}'),
+    (target_user_id, am_id, 1, 'Make bed', 'Household', '{"type": "daily"}'),
+    (target_user_id, am_id, 2, 'Pull Ups', 'Energy', '{"type": "daily"}'),
+    (target_user_id, am_id, 3, 'Check Weight', 'Health', '{"type": "daily"}'),
+    (target_user_id, am_id, 4, 'Refill 2L Jug', 'Health', '{"type": "daily"}'),
+    (target_user_id, am_id, 5, 'Cook', 'Household', '{"type": "daily"}'),
+    (target_user_id, am_id, 6, 'Wash dishes', 'Household', '{"type": "daily"}'),
+    (target_user_id, am_id, 7, 'Cold Shower', 'Health', '{"type": "daily"}'),
+    (target_user_id, am_id, 8, 'Read Book', 'Growth', '{"type": "daily"}'),
+    (target_user_id, am_id, 9, 'Walk Outside', 'Energy', '{"type": "daily"}'),
+    (target_user_id, am_id, 10, 'Morning House Chores', 'Household', '{"type": "daily"}'),
+    (target_user_id, am_id, 11, 'Day Plan Briefing', 'Mindset', '{"type": "daily"}'),
+    (target_user_id, am_id, 12, 'Deep work (4 hours)', 'Focus', '{"type": "daily"}');
 
-        RAISE NOTICE 'Seed habits created for user %', target_user_id;
-    END IF;
+    -- PM ROUTINE (6 habits)
+    INSERT INTO public.habits (user_id, routine_id, order_index, name, category, frequency) VALUES
+    (target_user_id, pm_id, 0, 'Lunch', 'Health', '{"type": "daily"}'),
+    (target_user_id, pm_id, 1, 'Wash dishes', 'Household', '{"type": "daily"}'),
+    (target_user_id, pm_id, 2, 'Deep work (2 hours)', 'Focus', '{"type": "daily"}'),
+    (target_user_id, pm_id, 3, 'Exercise', 'Energy', '{"type": "daily"}'),
+    (target_user_id, pm_id, 4, 'Cook dinner', 'Household', '{"type": "daily"}'),
+    (target_user_id, pm_id, 5, 'Dinner', 'Health', '{"type": "daily"}');
+
+    -- EVE ROUTINE (6 habits)
+    INSERT INTO public.habits (user_id, routine_id, order_index, name, category, frequency) VALUES
+    (target_user_id, eve_id, 0, 'Deep work (2 hours)', 'Focus', '{"type": "daily"}'),
+    (target_user_id, eve_id, 1, 'Wash dishes', 'Household', '{"type": "daily"}'),
+    (target_user_id, eve_id, 2, 'Prepare dish for tomorrow', 'Household', '{"type": "daily"}'),
+    (target_user_id, eve_id, 3, 'Planning', 'Mindset', '{"type": "daily"}'),
+    (target_user_id, eve_id, 4, 'Journal', 'Mindset', '{"type": "daily"}'),
+    (target_user_id, eve_id, 5, 'Read Book', 'Growth', '{"type": "daily"}');
+
 END $$;

@@ -15,9 +15,18 @@ export async function getDashboardSummary() {
       completedToday: 0,
       streakCount: 0,
       completionRate: 0,
-      habits: []
+      habits: [],
+      routines: []
     }
   }
+
+  // Get all routines to serve as tabs
+  const { data: routines, error: routinesError } = await supabase
+    .from('routines')
+    .select('*')
+    .order('order_index', { ascending: true })
+
+  if (routinesError) throw routinesError
 
   // Get all rituals for the user
   const { data: habits, error: habitsError } = await supabase
@@ -100,6 +109,7 @@ export async function getDashboardSummary() {
     completedToday,
     streakCount: dashboardStreak,
     completionRate: totalRituals > 0 ? (completedToday / totalRituals) * 100 : 0,
-    habits: processedHabits
+    habits: processedHabits,
+    routines: routines || []
   }
 }

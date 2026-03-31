@@ -26,7 +26,7 @@ export async function getHabits() {
     .from('habits')
     .select('*')
     .eq('user_id', user.id)
-    .order('created_at', { ascending: false });
+    .order('order_index', { ascending: true });
 
   if (error) throw error;
   return data as Habit[];
@@ -80,6 +80,28 @@ export async function updateHabit(id: string, updates: HabitUpdate) {
   revalidatePath('/dashboard');
   
   return data as Habit;
+}
+
+/**
+ * Update multiple existing habits.
+ */
+export async function bulkUpdateHabits(ids: string[], updates: HabitUpdate) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Unauthorized");
+
+  const { error } = await supabase
+    .from('habits')
+    .update(updates)
+    .in('id', ids)
+    .eq('user_id', user.id);
+
+  if (error) throw error;
+  
+  revalidatePath('/habits');
+  revalidatePath('/habit');
+  revalidatePath('/dashboard');
 }
 
 /**
@@ -254,4 +276,35 @@ export async function getRoutines() {
 
   if (error) throw error;
   return data as Routine[];
+}
+
+/**
+ * Update the order index for multiple habits.
+ */
+export async function updateHabitOrder(habitIds: string[]) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Unauthorized");
+
+  // Perform individual updates for each habit's order_index
+  // This is often more reliable with strict RLS policies than bulk upsert
+  const updates = habitIds.map((id, index) => 
+    supabase
+      .from('habits')
+      .update({ order_index: index })
+      .eq('id', id)
+      .eq('user_id', user.id)
+  );
+
+  const results = await Promise.all(updates);
+  const error = results.find(r => r.error)?.error;
+
+  if (error) {
+    console.error("Error updating habit order:", error);
+    throw error;
+  }
+
+  revalidatePath('/habit');
+  revalidatePath('/dashboard');
 }

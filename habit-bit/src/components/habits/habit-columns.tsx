@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
-import { MoreHorizontalIcon, TrashIcon, EditIcon, CheckCircleIcon, CircleIcon, ArchiveIcon, RotateCcwIcon } from "lucide-react"
+import { MoreHorizontalIcon, TrashIcon, EditIcon, CheckCircleIcon, CircleIcon, ArchiveIcon, RotateCcwIcon, GripVertical } from "lucide-react"
 
 import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "sonner"
@@ -24,6 +24,17 @@ export const getHabitColumns = (
   onDelete: (habit: Habit) => void,
   onArchive: (habit: Habit) => void
 ): ColumnDef<Habit>[] => [
+  {
+    id: "drag",
+    header: () => null,
+    cell: ({ row }) => (
+      <div className="flex items-center justify-center cursor-grab active:cursor-grabbing text-muted-foreground/30 hover:text-muted-foreground transition-colors p-1">
+        <GripVertical className="h-4 w-4" />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     id: "select",
     header: ({ table }) => (

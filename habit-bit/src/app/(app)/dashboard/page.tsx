@@ -6,7 +6,7 @@ import { StreakCard } from "@/components/dashboard/streak-card"
 import { QuoteCard } from "@/components/dashboard/daily-motivation"
 
 export default async function DashboardPage() {
-  const { habits } = await getDashboardSummary()
+  const { habits, routines } = await getDashboardSummary()
 
   // Sort habits by streak descending for the Top 3 view
   // Only habits with a 7+ day streak qualify for the Top Streak cards
@@ -51,7 +51,7 @@ export default async function DashboardPage() {
 
         {/* Right Sidebar: Daily Rituals */}
         <div className="w-full md:w-3/12 min-w-[320px] self-start sticky top-6 flex flex-col" style={{ height: 'calc(100vh - 4rem - 3rem)' }}>
-          <HabitChecklist habits={habits} />
+          <HabitChecklist habits={habits} routines={routines} />
         </div>
       </div>
     </PageScaffold>

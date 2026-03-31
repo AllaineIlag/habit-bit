@@ -76,45 +76,60 @@ export function HabitDialog({ habit, open: controlledOpen, onOpenChange, trigger
     "Progress", "Morning Ritual", "Evening Ritual", "Discipline", "Housekeeping"
   ]
 
-  // Initialize state from habit
+  // Consolidate data fetching and state initialization into a single stable hook
   useEffect(() => {
-    if (habit) {
-      setName(habit.name)
-      setCategory(habit.category || "General")
-      setIsCustomCategory(!PREDEFINED_CATEGORIES.includes(habit.category || "General"))
-      setRoutineId(habit.routine_id)
-      const freq = habit.frequency as any
-      if (freq?.type) {
-        setFrequencyType(freq.type)
-        if (freq.type === "weekly") setWeeklyDays(freq.days || [])
-        if (freq.type === "monthly") setMonthlyDay(freq.day || 1)
-        if (freq.type === "yearly") {
-          setYearlyMonth(freq.month || 0)
-          setYearlyDay(freq.day || 1)
-        }
-      }
-    } else {
-      // Reset for new habit
-      setName("")
-      setCategory("General")
-      setIsCustomCategory(false)
-      setRoutineId(null)
-      setFrequencyType("daily")
-      setWeeklyDays([1, 2, 3, 4, 5])
-    }
-  }, [habit, open])
+    let active = true;
 
-  useEffect(() => {
-    const fetchRoutines = async () => {
+    const loadData = async () => {
       try {
-        const data = await getRoutines()
-        setRoutines(data)
+        // 1. Fetch routines if not already loaded (or refresh them)
+        const routineData = await getRoutines();
+        if (!active) return;
+        setRoutines(routineData);
+
+        // 2. Initialize or Reset main form state
+        if (habit) {
+          setName(habit.name);
+          setCategory(habit.category || "General");
+          setIsCustomCategory(!PREDEFINED_CATEGORIES.includes(habit.category || "General"));
+          
+          // 3. Frequency setup
+          const freq = habit.frequency as any;
+          if (freq?.type) {
+            setFrequencyType(freq.type);
+            if (freq.type === "weekly") setWeeklyDays(freq.days || []);
+            if (freq.type === "monthly") setMonthlyDay(freq.day || 1);
+            if (freq.type === "yearly") {
+              setYearlyMonth(freq.month || 0);
+              setYearlyDay(freq.day || 1);
+            }
+          }
+
+          // 4. Validate routine_id against fresh routine list
+          const rawId = habit.routine_id;
+          const isValid = rawId && routineData.some(r => r.id === rawId);
+          setRoutineId(isValid ? rawId : null);
+        } else {
+          // Reset for "New Habit" mode
+          setName("");
+          setCategory("General");
+          setIsCustomCategory(false);
+          setRoutineId(null);
+          setFrequencyType("daily");
+          setWeeklyDays([1, 2, 3, 4, 5]);
+        }
       } catch (err) {
-        console.error("Failed to fetch routines:", err)
+        console.error("Failed to load dialog data:", err);
+        if (active) setRoutineId(null);
       }
+    };
+
+    if (open) {
+      loadData();
     }
-    fetchRoutines()
-  }, [])
+
+    return () => { active = false; };
+  }, [habit?.id, open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -131,12 +146,14 @@ export function HabitDialog({ habit, open: controlledOpen, onOpenChange, trigger
           frequency.day = yearlyDay
         }
 
+        const validRoutineId = (routineId && routines.some(r => r.id === routineId)) ? routineId : null
+
         if (habit) {
           await updateHabit(habit.id, {
             name,
             category,
             frequency,
-            routine_id: routineId
+            routine_id: validRoutineId
           })
           toast.success("Habit updated successfully")
         } else {
@@ -144,7 +161,7 @@ export function HabitDialog({ habit, open: controlledOpen, onOpenChange, trigger
             name,
             category,
             frequency,
-            routine_id: routineId
+            routine_id: validRoutineId
           })
           toast.success("Habit created successfully")
         }
@@ -229,19 +246,32 @@ export function HabitDialog({ habit, open: controlledOpen, onOpenChange, trigger
 
               <div className="grid gap-2">
                 <Label>Routine (Time of Day)</Label>
-                <Select value={routineId || "none"} onValueChange={(v) => setRoutineId(v === "none" ? null : v)}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select routine" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">None / Flexible</SelectItem>
-                    {routines.map((r) => (
-                      <SelectItem key={r.id} value={r.id}>
-                        {r.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {routines.length > 0 ? (
+                  <Select 
+                    value={(routineId && routines.some(r => r.id === routineId)) ? routineId : "none"} 
+                    onValueChange={(v) => setRoutineId(v === "none" ? null : v)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select routine">
+                        {routines.find(r => r.id === routineId)?.name || "None / Flexible"}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">None / Flexible</SelectItem>
+                      {routines.map((r) => (
+                        <SelectItem key={r.id} value={r.id}>
+                          {r.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Select disabled value="loading">
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Loading routines..." />
+                    </SelectTrigger>
+                  </Select>
+                )}
               </div>
             </div>
 

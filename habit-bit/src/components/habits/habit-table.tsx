@@ -15,7 +15,10 @@ import {
 } from "@tanstack/react-table"
 import { SearchIcon, SlidersHorizontalIcon, TrashIcon, XIcon, Loader2Icon, ArchiveIcon, RotateCcwIcon, EditIcon } from "lucide-react"
 import { toast } from "sonner"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, Reorder, useDragControls } from "framer-motion"
+import { GripVertical } from "lucide-react"
+import { updateHabitOrder } from "@/actions/habits"
+import { Badge } from "@/components/ui/badge"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -35,6 +38,7 @@ import {
 } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { HabitDialog } from "@/components/habits/habit-dialog"
+import { BulkEditDialog } from "@/components/habits/bulk-edit-dialog"
 import { AlertDialog } from "@/components/ui/alert-dialog"
 import { deleteHabit, deleteHabits, archiveHabit, archiveHabits, type Habit } from "@/actions/habits"
 
@@ -45,11 +49,48 @@ interface DataTableProps<TData, TValue> {
     onArchive: (habit: Habit) => void
   ) => ColumnDef<TData, TValue>[]
   data: TData[]
+  title?: string
+  countText?: string
+}
+
+function HabitRow({ row }: { row: any }) {
+  const controls = useDragControls()
+  
+  return (
+    <Reorder.Item
+      value={row.original}
+      as="tr"
+      dragControls={controls}
+      dragListener={false}
+      data-state={row.getIsSelected() && "selected"}
+      className="group hover:bg-muted/20 transition-colors bg-card/50 px-0 py-0"
+    >
+      {row.getVisibleCells().map((cell: any) => (
+        <TableCell key={cell.id} className="py-3 px-4 text-sm whitespace-nowrap">
+          {cell.column.id === "drag" ? (
+            <div 
+              onPointerDown={(e) => {
+                e.preventDefault()
+                controls.start(e)
+              }}
+              className="cursor-grab active:cursor-grabbing hover:bg-muted/50 rounded p-1 transition-colors"
+            >
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </div>
+          ) : (
+            flexRender(cell.column.columnDef.cell, cell.getContext())
+          )}
+        </TableCell>
+      ))}
+    </Reorder.Item>
+  )
 }
 
 export function HabitTable<TData, TValue>({
   columns: getColumns,
   data,
+  title = "Habit Inventory",
+  countText,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -59,6 +100,38 @@ export function HabitTable<TData, TValue>({
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({})
 
+  // --- REORDER LOGIC ---
+  const [items, setItems] = React.useState<TData[]>(data)
+
+  // Sync internal state with data prop when it changes (e.g. from server revalidation)
+  React.useEffect(() => {
+    setItems(data)
+  }, [data])
+
+  // Debounced server sync
+  React.useEffect(() => {
+    // If local state matches server data, nothing to sync
+    const isSameOrder = JSON.stringify(items) === JSON.stringify(data)
+    if (isSameOrder) return
+
+    const timer = setTimeout(async () => {
+      const habitIds = items.map(item => (item as any).id)
+      try {
+        await updateHabitOrder(habitIds)
+      } catch (error) {
+        toast.error("Failed to persist new order")
+        // Optionally revert to data here, but revalidatePath usually handles consistency
+      }
+    }, 700) // 700ms debounce for stability
+
+    return () => clearTimeout(timer)
+  }, [items, data])
+
+  const handleReorder = (newOrder: TData[]) => {
+    setItems(newOrder)
+  }
+  // ---------------------
+
   // CRUD States
   const [editingHabit, setEditingHabit] = React.useState<Habit | null>(null)
   const [deletingHabit, setDeletingHabit] = React.useState<Habit | null>(null)
@@ -67,6 +140,7 @@ export function HabitTable<TData, TValue>({
   const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = React.useState(false)
   const [isArchiving, setIsArchiving] = React.useState(false)
   const [isBulkArchiving, setIsBulkArchiving] = React.useState(false)
+  const [showBulkEditDialog, setShowBulkEditDialog] = React.useState(false)
 
   const handleArchive = React.useCallback(async (habit: Habit) => {
     setIsArchiving(true)
@@ -90,7 +164,7 @@ export function HabitTable<TData, TValue>({
   [getColumns, handleArchive])
 
   const table = useReactTable({
-    data,
+    data: items,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -156,7 +230,14 @@ export function HabitTable<TData, TValue>({
     <Card className="relative rounded-[var(--radius-lg)] border bg-card text-card-foreground shadow-sm overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <div className="flex flex-col gap-1">
-          <CardTitle>Habit Inventory</CardTitle>
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-xl font-bold">{title}</CardTitle>
+            {countText && (
+              <Badge variant="secondary" className="px-2 py-0.5 text-xs font-mono bg-primary/10 text-primary border-primary/20">
+                {countText}
+              </Badge>
+            )}
+          </div>
           <CardDescription>Manage your habit definitions and routines.</CardDescription>
         </div>
         <div className="flex items-center gap-2">
@@ -225,23 +306,16 @@ export function HabitTable<TData, TValue>({
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody>
+            <Reorder.Group 
+              as="tbody" 
+              axis="y" 
+              values={items} 
+              onReorder={handleReorder}
+              className="divide-y"
+            >
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                    className="group border-b hover:bg-muted/20 transition-colors"
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="py-3 px-4 text-sm">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
+                  <HabitRow key={row.id} row={row} />
                 ))
               ) : (
                 <TableRow>
@@ -253,7 +327,7 @@ export function HabitTable<TData, TValue>({
                   </TableCell>
                 </TableRow>
               )}
-            </TableBody>
+            </Reorder.Group>
           </Table>
         </div>
       </CardContent>
@@ -309,6 +383,16 @@ export function HabitTable<TData, TValue>({
                   variant="secondary" 
                   size="sm" 
                   className="h-9 px-4 rounded-xl bg-white/5 hover:bg-white/10 border-white/5 shadow-sm gap-2 transition-all active:scale-95"
+                  onClick={() => setShowBulkEditDialog(true)}
+                >
+                  <EditIcon className="h-4 w-4 text-muted-foreground" />
+                  <span>Edit</span>
+                </Button>
+                <div className="h-4 w-[1px] bg-border/30 mx-0.5" />
+                <Button 
+                  variant="secondary" 
+                  size="sm" 
+                  className="h-9 px-4 rounded-xl bg-white/5 hover:bg-white/10 border-white/5 shadow-sm gap-2 transition-all active:scale-95"
                   onClick={() => handleBulkArchive(true)}
                   disabled={isBulkArchiving}
                 >
@@ -350,6 +434,16 @@ export function HabitTable<TData, TValue>({
       </AnimatePresence>
 
       {/* Controlled CRUD Dialogs */}
+      <BulkEditDialog
+        selectedIds={selectedIds}
+        open={showBulkEditDialog}
+        onOpenChange={setShowBulkEditDialog}
+        onComplete={() => {
+          setRowSelection({})
+          setShowBulkEditDialog(false)
+        }}
+      />
+
       <HabitDialog 
         habit={editingHabit || undefined}
         open={!!editingHabit}
