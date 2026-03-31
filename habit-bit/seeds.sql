@@ -1,35 +1,19 @@
--- Habit-bit Specific Seed Data from User Screenshots
--- Run this AFTER creating a user in Supabase Auth.
+-- Habit-bit Specific Seed Data for Allaine Benedict Ilag
+-- Associating 25 habits across AM, PM, and EVE routines.
 
 DO $$
 DECLARE
-    target_user_id uuid;
+    target_user_id uuid := '5b395d16-a137-4d15-9915-390ae69480f4';
     am_id uuid := '8b57c0d5-76f4-48b9-8cda-cb98bf411823';
     pm_id uuid := '7f7e57f5-3d55-426c-815d-b28164ca8ae6';
     eve_id uuid := '6441e2b4-684c-4ab9-a425-eac072b6deec';
 BEGIN
-    -- Get the first available user
-    SELECT id INTO target_user_id FROM auth.users LIMIT 1;
-    
-    IF target_user_id IS NULL THEN
-        -- Create a dev user to associate the seed with
-        target_user_id := '00000000-0000-0000-0000-000000000000';
-        INSERT INTO auth.users (id, email, email_confirmed_at, created_at, updated_at, raw_app_meta_data, raw_user_meta_data, role, aud, encrypted_password)
-        VALUES (
-            target_user_id, 
-            'dev@habitbit.com', 
-            now(), 
-            now(), 
-            now(), 
-            '{"provider":"email","providers":["email"]}', 
-            '{}', 
-            'authenticated',
-            'authenticated',
-            '$2a$10$abcdefghijklmnopqrstuvwxyz123' -- Placeholder
-        );
+    -- Ensure user exists
+    IF NOT EXISTS (SELECT 1 FROM auth.users WHERE id = target_user_id) THEN
+        RAISE EXCEPTION 'User Allaine Benedict Ilag (%) not found.', target_user_id;
     END IF;
 
-    -- Clear existing habits for identifying this user
+    -- Clear existing habits for this user for a clean seed
     DELETE FROM public.habit_logs WHERE user_id = target_user_id;
     DELETE FROM public.habits WHERE user_id = target_user_id;
 

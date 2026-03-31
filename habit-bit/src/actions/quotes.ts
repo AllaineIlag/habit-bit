@@ -15,10 +15,15 @@ export async function getRandomQuote() {
   if (countError) throw countError
   if (!count) return null
 
-  // Calculate days since epoch for a stable "Quote of the Day"
-  // Using the system timezone to ensure the quote changes at local midnight (00:00 UTC+8)
-  const localDate = toZonedTime(new Date(), SYSTEM_TIMEZONE)
-  const daysSinceEpoch = Math.floor(localDate.getTime() / (1000 * 60 * 60 * 24))
+  // Calculate days since epoch for a stable "Quote of the Day" in the user's timezone
+  const zonedDate = toZonedTime(new Date(), SYSTEM_TIMEZONE)
+  // Create a UTC timestamp for the local calendar day (Midnight)
+  const localMidnightUTC = Date.UTC(
+    zonedDate.getFullYear(),
+    zonedDate.getMonth(),
+    zonedDate.getDate()
+  )
+  const daysSinceEpoch = Math.round(localMidnightUTC / (1000 * 60 * 60 * 24))
   const deterministicIndex = daysSinceEpoch % count
 
   const { data, error } = await supabase

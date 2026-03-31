@@ -48,3 +48,9 @@ Match the request to the correct workflow:
 - **DO NOT** mark a task complete if `npm run build` is failing.
 - If a squad reports completion without a build check, reject and order a retry.
 
+---
+
+## Step 5: Protocol Closure
+- In the final response, **attach the content of the workflow(s)** that were routed and executed.
+- This ensures the USER has full visibility into the protocols used to govern the mission.
+
