@@ -9,6 +9,7 @@ import {
   Book,
   Map as MapIcon,
   LayoutGrid,
+  Heart,
   type LucideIcon
 } from "lucide-react"
 
@@ -59,6 +60,11 @@ export const NAV_PLATFORM: NavItem[] = [
     title: "Analytics",
     url: "/analytics",
     icon: BarChart3,
+  },
+  {
+    title: "Health",
+    url: "/health",
+    icon: Heart,
   },
 ]
 

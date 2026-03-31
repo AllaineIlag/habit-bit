@@ -45,6 +45,7 @@ description: The Standard Operating Procedure for Team Piltover (Frontend & Desi
 2.  **Execution**:
     *   Perform code changes (Components, CSS, Logic).
     *   *Constraint*: Must follow the **"WOW" Aesthetic Protocol** (Vibrant, Animated, Premium, Responsive).
+    *   *Constraint*: **Cards MUST ALWAYS use `radius-lg`** (e.g., `rounded-[var(--radius-lg)]` or `rounded-xl` mapping).
     *   *Action*: Update `sitrep.md` marking your specific item as `[/]` (In Progress) and then `[x]` (Complete).
 
 

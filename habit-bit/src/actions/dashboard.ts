@@ -47,6 +47,7 @@ export async function getDashboardSummary() {
 
   const now = new Date()
   const todayZoned = toZonedTime(now, SYSTEM_TIMEZONE)
+  const today = format(todayZoned, 'yyyy-MM-dd')
   const monday = startOfWeek(todayZoned, { weekStartsOn: 1 })
 
   // Process each habit
@@ -104,12 +105,31 @@ export async function getDashboardSummary() {
     dsCheckDate = subDays(dsCheckDate, 1)
   }
 
+  // Get all rules for the user
+  const { data: rules, error: rulesError } = await supabase
+    .from('rules')
+    .select(`
+      *,
+      rule_logs(id, completed_at)
+    `)
+    .eq('user_id', user.id)
+    .eq('rule_logs.completed_at', today)
+    .order('order_index', { ascending: true })
+
+  if (rulesError) throw rulesError
+
+  const processedRules = rules.map(rule => ({
+    ...rule,
+    isCompletedToday: rule.rule_logs && rule.rule_logs.length > 0
+  }))
+
   return {
     totalRituals,
     completedToday,
     streakCount: dashboardStreak,
     completionRate: totalRituals > 0 ? (completedToday / totalRituals) * 100 : 0,
     habits: processedHabits,
-    routines: routines || []
+    routines: routines || [],
+    rules: processedRules
   }
 }

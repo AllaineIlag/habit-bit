@@ -255,12 +255,12 @@ export function HabitTable<TData, TValue>({
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
-                <Button variant="outline" size="sm" className="h-9 gap-2">
-                  <SlidersHorizontalIcon className="h-4 w-4" />
-                  View
-                </Button>
+                <Button variant="outline" size="sm" className="h-9 gap-2" />
               }
-            />
+            >
+              <SlidersHorizontalIcon className="h-4 w-4" />
+              View
+            </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {table
                 .getAllColumns()

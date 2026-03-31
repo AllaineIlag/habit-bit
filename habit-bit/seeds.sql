@@ -51,4 +51,21 @@ BEGIN
     (target_user_id, eve_id, 4, 'Journal', 'Mindset', '{"type": "daily"}'),
     (target_user_id, eve_id, 5, 'Read Book', 'Growth', '{"type": "daily"}');
 
+    -- RULES CHECKLIST (13 rules)
+    -- Standardized Sentence Case, no duplicates
+    INSERT INTO public.rules (user_id, order_index, title) VALUES
+    (target_user_id, 0, 'No breakfast until 10 AM'),
+    (target_user_id, 1, 'No snooze'),
+    (target_user_id, 2, 'No sugar'),
+    (target_user_id, 3, 'No coffee'),
+    (target_user_id, 4, 'No game day'),
+    (target_user_id, 5, 'No watching entertainment'),
+    (target_user_id, 6, 'No scrolling'),
+    (target_user_id, 7, 'No fapping'),
+    (target_user_id, 8, 'No phone on CR'),
+    (target_user_id, 9, 'No caffeine 10 hours'),
+    (target_user_id, 10, 'No food 3 hours'),
+    (target_user_id, 11, 'No stimulating activity 2 hours'),
+    (target_user_id, 12, 'No screens 1 hour');
+
 END $$;

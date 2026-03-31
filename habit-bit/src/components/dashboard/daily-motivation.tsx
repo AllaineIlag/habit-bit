@@ -31,7 +31,7 @@ export function QuoteCard() {
   }, [])
 
   return (
-    <Card className="rounded-[var(--radius-lg)] col-span-full border-none bg-[var(--bento-card-bg)] backdrop-blur-xl relative overflow-hidden flex items-center p-6 group min-h-[140px]">
+    <Card className="rounded-[var(--radius-lg)] border-none bg-[var(--bento-card-bg)] backdrop-blur-xl relative overflow-hidden flex items-center p-6 group min-h-[140px]">
       {/* Visual Background Decoration */}
       <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
         <Quote className="h-24 w-24 rotate-12" />
