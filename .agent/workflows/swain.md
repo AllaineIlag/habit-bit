@@ -12,6 +12,22 @@ description: call swain to initiate the Chain of Command Protocol
 
 ---
 
+## ⚡ Heartbeat Automation Mode
+If Swain is running as an **autonomous OpenClaw agent with a heartbeat**, use `AUTO.md` at the project root as the primary standing orders — NOT this file.
+
+This file (`swain.md`) governs **manual invocations** (`/swain`).
+`AUTO.md` governs **automatic heartbeat cycles** (every 10 minutes).
+
+**Folder structure for automation:**
+```
+/raw_tasks/   ← Drop .raw_task files here (your inbox)
+/shallow/     ← Swain writes clarity requests here (your outbox)
+/tasks/       ← Sub-tasks per region (piltover, zaun, freljord, noxus)
+/tasks_log/   ← Archive (completed, pending_clarity)
+```
+
+---
+
 ## Step 1: Context (The Situation Room)
 1. Read `mission_control/sitrep.md` — current project status.
 2. Read `mission_control/law.md` — standing rules and project identity.

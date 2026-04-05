@@ -1,0 +1,8 @@
+ID: 001
+Task: Sync Supabase Schema for Habits
+Region: zaun
+Description: Ensure the habits table has an 'icon' text column and 'category' enum/text column to support the new visual direction.
+Acceptance Criteria: 
+1. Database schema updated in Supabase.
+2. Prisma schema pulled and types generated.
+Constraints: None.
